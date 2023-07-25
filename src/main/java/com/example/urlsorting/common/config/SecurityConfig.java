@@ -7,9 +7,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import com.example.urlsorting.common.jwt.JwtFilter;
 import com.example.urlsorting.common.jwt.JwtProvider;
 
 @Configuration
@@ -24,13 +22,12 @@ public class SecurityConfig {
 
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-		http
+		return http
+			.httpBasic().disable()
 			.csrf().disable()
-			.addFilterBefore(new JwtFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class)
 			.authorizeHttpRequests()
-				.requestMatchers("/**").permitAll() // anyone can access /register
-				// .requestMatchers("/**").hasAnyAuthority()
-				.anyRequest().authenticated();
-		return http.build();
+			.requestMatchers("/**").permitAll()
+			.and()
+			.build();
 	}
 }

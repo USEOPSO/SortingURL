@@ -6,6 +6,6 @@ import lombok.Setter;
 @Setter
 @Getter
 public class SortRequestDto {
-	private String token;
+	private Long userId;
 	private String destination;
 }

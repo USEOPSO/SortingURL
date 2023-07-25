@@ -68,6 +68,6 @@ public class Sort {
 	}
 
 	public void clickCnt(int clickCnt) {
-		this.clickCnt = clickCnt;
+		this.clickCnt = clickCnt + 1;
 	}
 }

@@ -1,16 +1,15 @@
 package com.example.urlsorting.user.dto.response;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @Getter
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 public class LoginResponseDto {
-	private String email;
-	private String token;
+	private final String email;
+	private final String token;
+
+	public LoginResponseDto(String email, String token) {
+		this.email = email;
+		this.token = token;
+	}
 
 }

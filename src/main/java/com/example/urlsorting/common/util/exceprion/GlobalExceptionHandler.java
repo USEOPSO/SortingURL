@@ -21,6 +21,11 @@ public class GlobalExceptionHandler {
 		return errorResponse(e.getMessage());
 	}
 
+	@ExceptionHandler(value = {SortNotFoundException.class})
+	public ResponseEntity<?> handleSortNotFoundExpiredException(SortNotFoundException e) {
+		return errorResponse(e.getMessage());
+	}
+
 	private ResponseEntity<String> errorResponse(String message) {
 		return ResponseEntity.ok(message);
 	}

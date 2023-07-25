@@ -28,22 +28,27 @@ public class User {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long userId;
 
-	@Column(nullable = false, length = 30)
+	@Column(length = 30)
 	private String name;
 
-	@Column(nullable = false, unique = true, length = 100)
+	@Column(unique = true, length = 100)
 	private String email;
 
-	@Column(nullable = false, length = 100)
+	@Column(length = 100)
 	private String password;
 
-	@Column(nullable = false)
+	@Column()
 	private String token;
 
-	@Column(nullable = false)
+	@Column()
 	private Role role = Role.USER;
+
 
 	@JsonIgnore
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
 	private List<Sort> sorts;
+
+	public void setToken(String token) {
+		this.token = token;
+	}
 }

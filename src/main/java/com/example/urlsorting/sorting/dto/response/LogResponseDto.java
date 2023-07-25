@@ -2,16 +2,19 @@ package com.example.urlsorting.sorting.dto.response;
 
 import java.util.Date;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+import com.example.urlsorting.sorting.entities.Log;
+
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @Getter
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 public class LogResponseDto {
-	private String ip;
-	private Date creatAt;
+	private final Long logId;
+	private final String ip;
+	private final Date creatAt;
+
+	public LogResponseDto(Log log) {
+		this.logId = log.getLogId();
+		this.ip = log.getIp();
+		this.creatAt = log.getCreateAt();
+	}
 }

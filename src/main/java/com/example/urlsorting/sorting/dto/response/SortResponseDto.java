@@ -3,21 +3,23 @@ package com.example.urlsorting.sorting.dto.response;
 import java.util.Date;
 
 import com.example.urlsorting.sorting.entities.Sort;
-import com.example.urlsorting.user.entities.User;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @Getter
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 public class SortResponseDto {
-	private String destination;
-	private String sort;
-	private Date createAt;
-	private int clickCnt;
-	private Date lastClickAt;
+	private final Long sortId;
+	private final String destination;
+	private final String sort;
+	private final Date createAt;
+	private final int clickCnt = 0;
+	private final Date lastClickAt;
+
+	public SortResponseDto(Sort sort) {
+		this.sortId = sort.getSortId();
+		this.destination = sort.getDestination();
+		this.sort = sort.getSort();
+		this.createAt = sort.getCreateAt();
+		this.lastClickAt = sort.getLastClickAt();
+	}
 }
