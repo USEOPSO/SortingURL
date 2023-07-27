@@ -1,5 +1,6 @@
 package com.example.urlsorting.sorting.entities;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -48,7 +49,7 @@ public class Sort {
 
 	@JsonIgnore
 	@OneToMany(mappedBy = "sort", cascade = CascadeType.ALL)
-	private List<Log> logs;
+	private List<Log> logs = new ArrayList<>();
 
 	@JsonIgnore
 	@ManyToOne(fetch = FetchType.LAZY)

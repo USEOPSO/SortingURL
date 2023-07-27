@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.urlsorting.sorting.dto.request.ListableSortsRequestDto;
 import com.example.urlsorting.sorting.dto.request.SortRequestDto;
 import com.example.urlsorting.sorting.dto.response.SortResponseDto;
+import com.example.urlsorting.sorting.dto.response.TestSortResponseDto;
 import com.example.urlsorting.sorting.repository.SortRepository;
 import com.example.urlsorting.sorting.service.SortService;
 
@@ -29,7 +30,7 @@ public class SortController {
 	private final SortService sortService;
 
 	@GetMapping("/{sortId}")
-	public SortResponseDto getSort(@PathVariable("sortId") Long sortId) throws Exception {
+	public TestSortResponseDto getSort(@PathVariable("sortId") Long sortId) throws Exception {
 		return sortService.getSort(sortId);
 	}
 
