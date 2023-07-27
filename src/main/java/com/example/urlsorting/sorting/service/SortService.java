@@ -13,13 +13,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.urlsorting.common.util.exceprion.SortNotFoundException;
 import com.example.urlsorting.common.util.exceprion.UserNotFoundException;
-import com.example.urlsorting.common.util.page.Page;
-import com.example.urlsorting.common.util.page.PageResponseDto;
 import com.example.urlsorting.sorting.dto.request.ListableSortsRequestDto;
 import com.example.urlsorting.sorting.dto.request.SortRequestDto;
 import com.example.urlsorting.sorting.dto.response.LogResponseDto;
@@ -32,6 +34,7 @@ import com.example.urlsorting.sorting.repository.LogRepository;
 import com.example.urlsorting.sorting.repository.SortRepository;
 import com.example.urlsorting.user.entities.User;
 import com.example.urlsorting.user.repository.UserRepository;
+import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPAExpressions;
@@ -51,59 +54,36 @@ public class SortService {
 	private static final String BASE_URL = "http://localhost:8080/sort/sortingUrl/";
 
 	public TestSortResponseDto getSort(Long sortId) throws Exception{
-		// Sort getSort = sortRepository.findById(sortId).orElseThrow(() -> new SortNotFoundException("Not Found Sort"));
-		// Sort getSort = jpaQueryFactory.selectFrom(sort1).where(sort1.sortId.eq(sortId)).fetchOne();
-		// return new SortResponseDto(getSort);
-
 		TestSortResponseDto getSort = jpaQueryFactory
-			.select(Projections.fields(TestSortResponseDto.class, sort1, ExpressionUtils.as(JPAExpressions.select(log))))
+			.select(Projections.constructor(TestSortResponseDto.class, sort1))
 			.from(sort1)
-			.leftJoin(sort1.logs, log).fetchJoin()
 			.where(sort1.sortId.eq(sortId))
 			.fetchOne();
+
 		if(getSort == null) {
 			throw new SortNotFoundException("Not Found Sort");
 		}
-		return new TestSortResponseDto(getSort);
 
-		// TestSortResponseDto sorts = jpaQueryFactory
-		// 	.select(Projections.bean(TestSortResponseDto.class, sort1))
-		// 	.from(sort1)
-		// 	.leftJoin(sort1.logs, log).fetchJoin()
-		// 	.where(sort1.sortId.eq(sortId))
-		// 	.fetchOne();
-
-		// TestSortResponseDto sorts = jpaQueryFactory
-		// 	.select(Projections.fields(TestSortResponseDto.class,
-		// 		sort1.sortId.as("sortId"),
-		// 		sort1.destination.as("destination"),
-		// 		sort1.sort.as("sort"),
-		// 		sort1.createAt.as("createAt"),
-		// 		sort1.clickCnt.as("clickCnt"),
-		// 		sort1.lastClickAt.as("lastClickAt"),
-		// 		ExpressionUtils.as(JPAExpressions
-		// 			.select(log)
-		// 			.from(log)
-		// 			.where(log.sort.eq(sort1)), "logs")))
-		// 	.from(sort1)
-		// 	.where(sort1.sortId.eq(sortId))
-		// 	.fetchOne();
-
-		// if(sorts == null) {
-		// 	throw new SortNotFoundException("Not Found Sort");
-		// }
-		// return sorts;
+		return getSort;
 	}
 
-	public List<SortResponseDto> listableSorts(ListableSortsRequestDto request) throws Exception{
-		List<Sort> sorts = sortRepository.findByUser(request.getUserId());
-		if (sorts.isEmpty()) {
-			return new ArrayList<>();
+	public Page<SortResponseDto> listableSorts(ListableSortsRequestDto request, Pageable pageable) throws Exception{
+		pageable = PageRequest.of(request.getPage(), request.getSize());
+
+		QueryResults<SortResponseDto> results = jpaQueryFactory
+			.select(Projections.constructor(SortResponseDto.class,sort1))
+			.from(sort1)
+			.where(sort1.user.userId.eq(request.getUserId()))
+			.offset(pageable.getOffset())
+			.limit(pageable.getPageSize())
+			.fetchResults();
+
+		List<SortResponseDto> listableSorts = results.getResults();
+
+		if (listableSorts.isEmpty()) {
+			return new PageImpl<>(new ArrayList<>(), pageable, results.getTotal());
 		}
-
-		PageResponseDto page = Page.page(request, sorts);
-
-		return sorts.subList(page.getStart(), page.getEnd()).stream().map(sort-> new SortResponseDto(sort)).collect(Collectors.toList());
+		return new PageImpl<>(listableSorts, pageable, results.getTotal());
 	}
 
 	@Transactional

@@ -30,27 +30,11 @@ public class TestSortResponseDto {
 		this.createAt = sort.getCreateAt();
 		this.clickCnt = sort.getClickCnt();
 		this.lastClickAt = sort.getLastClickAt();
-		// this.logs = sort.getLogs().stream().map(TestLogResponseDto::new).collect(Collectors.toList());;
+		// log 데이터가 없으면 빈 리스트 반환
 		this.logs = Optional.ofNullable(sort.getLogs())
 			.orElseGet(Collections::emptyList)
 			.stream()
 			.map(TestLogResponseDto::new)
 			.collect(Collectors.toList());
 	}
-
-	// public TestSortResponseDto(Long sortId, String destination, String sort, Date createAt, int clickCnt,
-	// 	Date lastClickAt,
-	// 	List<TestLogResponseDto> logs) {
-	// 	this.sortId = sortId;
-	// 	this.destination = destination;
-	// 	this.sort = sort;
-	// 	this.createAt = createAt;
-	// 	this.clickCnt = clickCnt;
-	// 	this.lastClickAt = lastClickAt;
-	// 	this.logs = Optional.ofNullable(logs)
-	// 			.orElseGet(Collections::emptyList)
-	// 			.stream()
-	// 			.map(TestLogResponseDto::new)
-	// 			.collect(Collectors.toList());;
-	// }
 }
