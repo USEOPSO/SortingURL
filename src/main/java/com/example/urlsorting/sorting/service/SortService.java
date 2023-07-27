@@ -54,11 +54,20 @@ public class SortService {
 	private static final String BASE_URL = "http://localhost:8080/sort/sortingUrl/";
 
 	public TestSortResponseDto getSort(Long sortId) throws Exception{
+		// sort 조회
 		TestSortResponseDto getSort = jpaQueryFactory
 			.select(Projections.constructor(TestSortResponseDto.class, sort1))
 			.from(sort1)
 			.where(sort1.sortId.eq(sortId))
 			.fetchOne();
+
+		List<TestLogResponseDto> listableLogs = jpaQueryFactory
+			.select(Projections.constructor(TestLogResponseDto.class, log))
+			.from(log)
+			.where(log.sort.sortId.eq(getSort.getSortId()))
+			.fetch();
+
+		getSort.setLogs(listableLogs);
 
 		if(getSort == null) {
 			throw new SortNotFoundException("Not Found Sort");
